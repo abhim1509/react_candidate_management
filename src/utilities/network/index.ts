@@ -1,13 +1,12 @@
 import axios from "axios";
 
-const getRequest = async (url: string) => {
+const getRequest = async (url: string, token: string) => {
   try {
-    const response = await axios.get(url);
-    console.log(response);
-    //Check response object, check response status and then check data retrieved.
-    //Blank object and array return truthy values, need to check explicitly.
-    //Optical chaining
-    //false, null, undefined.
+    //console.log("getRequest")
+    const response = await axios.get(url, {
+      headers: { authorization: token },
+    });
+    //console.log("getRequest -response.data",response.data);
     const result =
       response && response.status === 200 && response?.data
         ? response.data
@@ -19,43 +18,53 @@ const getRequest = async (url: string) => {
   }
 };
 
-const deleteRequest = async (url: string, params: any) => {
+const deleteRequest = async (url: string, token: any) => {
   try {
-    const response = await axios.delete(url, params);
-    console.log(response);
+    const response = await axios.delete(url, {
+      headers: { authorization: token },
+    });
+    //console.log(response);
     return response;
   } catch (error: any) {
-    throw new Error(error);
+    console.log(error);
+    return {};
   }
 };
 
-const postRequest = async (url: string, data: any, params: any) => {
+const postRequest = async (url: string, data: any, token: any) => {
   try {
-    const response = await axios.post(url, data, params);
-    console.log(response);
+    const response = await axios.post(url, data, {
+      headers: { authorization: token },
+    });
+    //console.log(response);
     return response;
   } catch (error: any) {
-    throw new Error(error);
+    console.log(error);
+    return {};
   }
 };
 
-const putRequest = async (url: string, data: any, params: any) => {
+const putRequest = async (url: string, data: any, token: any) => {
   try {
-    const response = await axios.put(url, data, params);
+    const response = await axios.put(url, data, {
+      headers: { authorization: token },
+    });
     console.log(response);
     return response;
   } catch (error: any) {
-    throw new Error(error);
+    console.log(error);
+    return {};
   }
 };
 
 const patchRequest = async (url: string, data: any, params: any) => {
   try {
     const response = await axios.patch(url, data, params);
-    console.log(response);
+    //console.log(response);
     return response;
   } catch (error: any) {
-    throw new Error(error);
+    console.log(error);
+    return {};
   }
 };
 

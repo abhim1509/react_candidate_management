@@ -10,4 +10,7 @@ const isArrEmpty = (arr: any) => {
   return arr.length === 0;
 };
 
-export { parsedJSON, isArrEmpty };
+const isObjectEmpty = (obj: object) => {
+  return Object.keys(obj).length !== 0 ? obj : {};
+};
+export { parsedJSON, isObjectEmpty };

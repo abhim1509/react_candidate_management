@@ -1,4 +1,0 @@
-const SELECTED_CANDIDATES = "selected";
-const REJECTED_CANDIDATES = "rejected";
-
-export { SELECTED_CANDIDATES, REJECTED_CANDIDATES };
