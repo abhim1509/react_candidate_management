@@ -4,24 +4,21 @@ import { getValue, setValue } from "@/utilities/storage";
 import { getTaskList, deleteTask } from "@/utilities/network/routes";
 import { parsedJSON } from "@/utilities/reusable";
 import { useNavigate } from "react-router";
+import UserTask from "./UserTask";
 
 const UserTasks = () => {
   const [userTasks, setUserTask] = useState([]);
   const navigate = useNavigate();
-  let getUserTasks: any;
-  let userObj: any;
+
   useEffect(() => {
-    getUserTasks = async () => {
-      userObj = parsedJSON(getValue("userObject"));
-      //console.log("userObj.data", userObj.data);
-      const taskObj = await getTaskList(
+    const getUserTasks = async () => {
+      const userObj = parsedJSON(getValue("userObject"));
+      const taskObj: any = await getTaskList(
         userObj.data?.userId,
         userObj.data?.token
       );
-      //console.log("taskObj", taskObj);
-      //console.log("taskObj?.resultSet", taskObj?.resultSet);
-      setUserTask(taskObj?.resultSet);
-      //console.log("userTasks", userTasks);
+
+      setUserTask(taskObj?.resultSet || []);
     };
 
     getUserTasks();
@@ -32,97 +29,44 @@ const UserTasks = () => {
     navigate(`/users/${userObj.data?.userId}/tasks/add`);
   };
 
-  let _deleteTask = async (index: any) => {
-    //console.log("index", index);
-    const taskToDelete = userTasks[index];
-    //console.log("taskToDelete", taskToDelete);
-    //console.log("parsedJSONauthToken)", parsedJSON("authToken"));
+  let _deleteTask = async (taskObj: any) => {
+    console.log("taskobj", taskObj);
     const token: any = getValue("authToken");
-    await deleteTask(taskToDelete.createdBy, taskToDelete._id, token);
-    //await getTaskList(taskToDelete.createdBy, token);
+    await deleteTask(taskObj.createdBy, taskObj._id, token);
     window.location.reload();
   };
 
-  const _editTask = async (index: any) => {
-    //console.log("userObj", userObj);
-    const taskToEdit = userTasks[index];
-    console.log("taskToEdit", taskToEdit);
-    setValue("taskToEdit", taskToEdit);
-    navigate(`/users/${taskToEdit.createdBy}/tasks/${taskToEdit._id}/edit`);
+  const _editTask = async (taskObj: any) => {
+    setValue("taskToEdit", taskObj);
+    navigate(`/users/${taskObj.createdBy}/tasks/${taskObj._id}/edit`);
   };
+
+  const _renderTaskList = () => {
+    if (userTasks.length === 0) return <p>No tasks found</p>;
+    return (
+      <ol>
+        {userTasks.map((task: any) => {
+          return (
+            <UserTask
+              key={task._id}
+              task={task}
+              editTask={_editTask}
+              deleteTask={_deleteTask}
+            />
+          );
+        })}
+      </ol>
+    );
+  };
+
   return (
     <div>
       <h1>User Tasks</h1>
       <NavigationBar />
       <div>
-        <button
-          onClick={() => {
-            _addTask();
-          }}
-        >
-          Add Task
-        </button>
+        <button onClick={_addTask}>Add Task</button>
       </div>
-      <div>
-        {userTasks ? (
-          <div>
-            <ol>
-              {userTasks.map((task: any, index: any) => {
-                return (
-                  <li key={index}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        border: "1px solid black",
-                      }}
-                    >
-                      <div>
-                        <span>Description </span>
-                        {task.description}
-                      </div>
-                      <div>
-                        <span>Task status </span>
-                        {task.isCompleted ? "Completed" : "Not Completed"}
-                      </div>
-                      <div>
-                        <span>Priority </span>
-                        {task.priority}
-                      </div>
-                      <div>
-                        <span>Deadline </span>
-                        {task.deadline}
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "row" }}>
-                        <div>
-                          <button
-                            onClick={() => {
-                              _editTask(index);
-                            }}
-                          >
-                            Edit
-                          </button>
-                        </div>
-                        <div>
-                          <button
-                            onClick={() => {
-                              _deleteTask(index);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        ) : (
-          "No tasks found."
-        )}
-      </div>
+      <div>{_renderTaskList()}</div>
     </div>
   );
 };

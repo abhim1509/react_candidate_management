@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { registerUser } from "./../utilities/network/routes";
 import NavigationBar from "./NavigationBar";
 
@@ -7,29 +7,32 @@ const RegisterUser = () => {
   const [password, setPassword] = useState("");
   const [registerUserStatus, setRegisterUserStatus] = useState("");
 
-  const _handleInput = function (e: any) {
-    switch (e.target.name) {
+  const _handleInput = (e: any) => {
+    if (!e?.target?.name) return;
+
+    const { name, value } = e.target;
+
+    switch (name) {
       case "email":
-        setEmail(e.target.value);
+        setEmail(value);
         break;
       case "password":
-        setPassword(e.target.value);
+        setPassword(value);
         break;
     }
   };
 
-  const _handleForm = async function () {
-    //console.log("email", email);
-    //console.log("password", password);
-    const userResult = await registerUser(email, password);
+  const _handleForm = async () => {
+    const userResult: any = await registerUser(email, password);
     console.log(userResult.status);
+    if (userResult.status !== 201) return alert("Signup unsuccessful.");
     setRegisterUserStatus(userResult.status);
   };
-  //console.log(typeof registerUserStatus);
+
   return (
     <>
       <h1>Register user</h1>
-      <NavigationBar></NavigationBar>
+      <NavigationBar />
 
       <input
         type="email"
@@ -43,29 +46,8 @@ const RegisterUser = () => {
         placeholder="Enter user's password."
         onChange={_handleInput}
       />
-      <button
-        onClick={() => {
-          _handleForm();
-        }}
-      >
-        Submit
-      </button>
+      <button onClick={_handleForm}>Submit</button>
       <h2>{registerUserStatus}</h2>
-      <div>
-        {registerUserStatus != "" ? (
-          <div>
-            {registerUserStatus === "201" ? (
-              <div>
-                <h3>User created successfully.</h3>
-              </div>
-            ) : (
-              <h3>There was an error creating user.</h3>
-            )}
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
     </>
   );
 };

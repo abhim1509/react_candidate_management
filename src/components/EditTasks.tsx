@@ -9,30 +9,33 @@ const EditTasks = () => {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("0");
   const [isTaskCompleted, setIsTaskCompleted] = useState(0);
-  const [deadlineDate, setDate] = useState(new Date());
+  const [deadlineDate, setDate] = useState("");
   const [taskToEdit, setTaskToEdit] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTaskToEdit(getValue("taskToEdit"));
+    const task = parsedJSON(getValue("taskToEdit"));
+    setTaskToEdit(task);
+    setDescription(task?.description);
+    setPriority(task?.priority);
+    setIsTaskCompleted(task?.isCompleted);
+    console.log("task", task);
   }, []);
 
   const _handleInput = (e: any) => {
     const { value, name } = e.target;
-    //console.log({ value, name });
     switch (name) {
       case "description":
         setDescription(value);
-        //console.log("description", description);
         break;
-
       case "priority":
         setPriority(value);
-        //console.log("priority", priority);
         break;
       case "isTaskCompleted":
         setIsTaskCompleted(value);
-        //console.log("isTaskCompleted", value);
+        break;
+      case "date":
+        setDate(value);
         break;
     }
   };
@@ -53,7 +56,7 @@ const EditTasks = () => {
     editTask(userId, taskToEdit._id, taskObj, token);
     navigate(`/users/${userId}/tasks/`);
   };
-  //console.log(taskToEdit);
+
   return (
     <>
       <div
@@ -66,6 +69,7 @@ const EditTasks = () => {
         <label htmlFor="description">Task Description</label>
         <input
           type="text"
+          value={description}
           name="description"
           id="description"
           onChange={(e: any) => {
@@ -75,21 +79,15 @@ const EditTasks = () => {
         <label htmlFor="priority">Task priority</label>
         <input
           type="text"
+          value={priority}
           name="priority"
           id="priority"
-          onChange={(e: any) => {
-            _handleInput(e);
-          }}
+          onChange={_handleInput}
         />
         <div>
           {" "}
           Task completed:
-          <select
-            name="isTaskCompleted"
-            onChange={(e: any) => {
-              _handleInput(e);
-            }}
-          >
+          <select name="isTaskCompleted" onChange={_handleInput}>
             <option value={0}>No</option>
             <option value={1}>Yes</option>
           </select>
@@ -99,10 +97,8 @@ const EditTasks = () => {
           <input
             type="date"
             name="date"
-            id=""
-            onChange={(date: any) => {
-              setDate(date.target.value);
-            }}
+            value={deadlineDate}
+            onChange={_handleInput}
           />
         </div>
         <button onClick={_editTasktoUser}>Save</button>
