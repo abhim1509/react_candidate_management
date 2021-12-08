@@ -1,11 +1,13 @@
 import { deleteRequest, getRequest, postRequest, putRequest } from ".";
 import { isObjectEmpty } from "../reusable";
+import { setValue } from "../storage";
 import {
   BASE_URL,
   loginURI,
   taskURI,
   userURI,
   registerUserURI,
+  logoutURI,
 } from "./config";
 
 const getTaskList = async (userId: string, token: string) => {
@@ -13,7 +15,7 @@ const getTaskList = async (userId: string, token: string) => {
   //console.log("getTaskList -taskListURL",taskListURL)
   //console.log("getTaskList - token", token)
   const response = await getRequest(taskListURL, token);
-  //console.log("response",response);
+  console.log("response", response);
   return isObjectEmpty(response);
 };
 
@@ -40,7 +42,7 @@ const editTask = async (
   const editTaskURL = `${BASE_URL}/${userURI}/${userId}/${taskURI}/${taskId}`;
   console.log("addTask - editTaskURL", editTaskURL);
   const addedTask = await putRequest(editTaskURL, taskObject, token);
-  console.log("routes - editTask", addedTask);
+  //console.log("addedTask", addedTask)
 };
 
 const registerUser = async (email: string, password: string) => {
@@ -55,13 +57,31 @@ const registerUser = async (email: string, password: string) => {
 
 const login = async (email: string, password: string) => {
   const loginURL = `${BASE_URL}/${loginURI}`;
-  console.log(loginURL);
+  //console.log(loginURL);
   const response = await putRequest(
     loginURL,
     { email: email, password: password },
     {}
   );
-  console.log("login", response);
+  //console.log("login", response);
   return isObjectEmpty(response);
 };
-export { getTaskList, login, deleteTask, registerUser, addTask, editTask };
+
+const logout = () => {
+  /*   const logoutURL = `${BASE_URL}/${logoutURI}`
+  const response = await putRequest(logoutURL,{_id:userId},token);
+  console.log("response",response)
+ */
+  setValue("userObject", "");
+  setValue("authToken", "");
+};
+
+export {
+  getTaskList,
+  login,
+  deleteTask,
+  registerUser,
+  addTask,
+  editTask,
+  logout,
+};

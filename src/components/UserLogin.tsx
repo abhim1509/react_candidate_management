@@ -1,6 +1,6 @@
-import { login } from "./../utilities/network/routes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { login } from "./../utilities/network/routes";
 import NavigationBar from "./NavigationBar";
 import { getValue, setValue } from "@/utilities/storage";
 
@@ -9,33 +9,34 @@ const UserLogin = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const _handleInput = function (e: any) {
-    switch (e.target.name) {
+  const _handleInput = (e: any) => {
+    if (!e?.target?.name) return;
+
+    const { name, value } = e.target;
+
+    switch (name) {
       case "email":
-        setEmail(e.target.value);
+        setEmail(value);
         break;
       case "password":
-        setPassword(e.target.value);
+        setPassword(value);
         break;
     }
   };
 
-  const _handleForm = async function () {
-    const userResult = await login(email, password);
+  const _handleForm = async () => {
+    const userResult: any = await login(email, password);
     console.log(userResult);
 
-    if (
-      userResult &&
-      userResult.data &&
-      userResult.data.userId &&
-      userResult.status === 200
-    ) {
-      setValue("userObject", userResult);
-      setValue("authToken", userResult.data.token);
-      console.log("User login -getToken", getValue("authToken"));
-      console.log(`/users/${userResult.data.userId}/tasks`);
-      navigate(`/users/${userResult.data.userId}/tasks`);
+    if (!userResult?.data?.userId || userResult?.status !== 200) {
+      return;
     }
+
+    setValue("userObject", userResult);
+    setValue("authToken", userResult.data.token);
+    console.log("User login -getToken", getValue("authToken"));
+    console.log(`/users/${userResult.data.userId}/tasks`);
+    navigate(`/users/${userResult.data.userId}/tasks`);
   };
 
   return (
@@ -55,13 +56,7 @@ const UserLogin = () => {
           placeholder="Enter user's password."
           onChange={_handleInput}
         />
-        <button
-          onClick={() => {
-            _handleForm();
-          }}
-        >
-          Submit
-        </button>
+        <button onClick={_handleForm}>Submit</button>
       </div>
     </>
   );

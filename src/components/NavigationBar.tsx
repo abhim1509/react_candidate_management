@@ -1,5 +1,6 @@
 import { getValue } from "@/utilities/storage";
 import { Link } from "react-router-dom";
+import UserLogout from "./UserLogout";
 
 const NavigationBar = () => {
   //const token = getValue("authToken");
@@ -20,11 +21,7 @@ const NavigationBar = () => {
           <Link to={"/register"}>Register User</Link>
         </div>
         <div>
-          {token ? (
-            <Link to={"/"}>Logout</Link>
-          ) : (
-            <Link to={"/login"}>Login</Link>
-          )}
+          <UserLogout />
         </div>
       </div>
     </>

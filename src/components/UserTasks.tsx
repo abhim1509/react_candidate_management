@@ -83,7 +83,7 @@ const UserTasks = () => {
                       </div>
                       <div>
                         <span>Task status </span>
-                        {task.isCompleted}
+                        {task.isCompleted ? "Completed" : "Not Completed"}
                       </div>
                       <div>
                         <span>Priority </span>

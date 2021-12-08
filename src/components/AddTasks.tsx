@@ -8,13 +8,13 @@ import NavigationBar from "./NavigationBar";
 const AddTasks = () => {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("0");
-  const [isTaskCompleted, setIsTaskCompleted] = useState(0);
+  const [isTaskCompleted, setIsTaskCompleted] = useState(false);
   const [deadlineDate, setDate] = useState(new Date());
   const navigate = useNavigate();
 
   const _handleInput = (e: any) => {
     const { value, name } = e.target;
-    //console.log({ value, name });
+    console.log({ value, name });
     switch (name) {
       case "description":
         setDescription(value);
@@ -26,8 +26,9 @@ const AddTasks = () => {
         //console.log("priority", priority);
         break;
       case "isTaskCompleted":
-        setIsTaskCompleted(value);
-        //console.log("isTaskCompleted", value);
+        const booleanVal = value === "1" ? true : false;
+        setIsTaskCompleted(booleanVal);
+        console.log("isTaskCompleted", booleanVal);
         break;
     }
   };
@@ -40,6 +41,7 @@ const AddTasks = () => {
       priority: priority,
       deadline: date,
     };
+    console.log("_addTasktoUser -isTaskCompleted", isTaskCompleted);
     const userObj = parsedJSON(getValue("userObject"));
     const { userId, token } = userObj.data;
     console.log({ userId, token });
